@@ -1,0 +1,14 @@
+CREATE TABLE public.bitacora_viajes
+(
+    id serial,
+    id_viaje integer,
+    fecha date
+) PARTITION BY RANGE (fecha);
+
+ALTER TABLE IF EXISTS public.bitacora_viajes
+    OWNER to postgres;
+
+--PARTICION DE bitacora_viajes
+
+CREATE TABLE bitacora_viajes_201001 PARTITION OF bitacora_viajes
+FOR VALUES FROM ('2010-01-01') TO ('2010-02-01');
