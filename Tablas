@@ -1,37 +1,45 @@
-CREATE TABLE pasajero(
-	id serial,
-	nombre character varying(100),
-	direccion_residencia character varying,
-	fecha_nacimiento date,
-	CONSTRAINT pasajero_pkey PRIMARY KEY (id)
-);
-CREATE TABLE tren(
-	id serial,
-	modelo character varying(30),
-	capacidad integer,
-	CONSTRAINT tren_pkey PRIMARY KEY (id)
-);
-CREATE TABLE estacion(
-	id serial,
-	nombre character varying(30),
-	direccion character varying(100),
-	CONSTRAINT estacion_pkey PRIMARY KEY (id)
-);
-CREATE TABLE trayecto(
-	id serial,
-	id_tren integer,
-	id_estacion integer,
-	CONSTRAINT trayecto_pkey PRIMARY KEY (id),
-	FOREIGN KEY (id_tren) REFERENCES estacion(id),
-	FOREIGN KEY (id_estacion) REFERENCES tren(id)
-);
-CREATE TABLE viaje(
-	id serial,
-	id_pasajero integer,
-	id_trayecto integer,
-	inicio date,
-	fin date,
-	CONSTRAINT viaje_pkey PRIMARY KEY (id),
-	FOREIGN KEY (id_pasajero) REFERENCES pasajero (id),
-	FOREIGN KEY (id_trayecto) REFERENCES trayecto (id)
-);
+* SE CREA TABLA DE ESTACION */
+CREATE TABLE public.estacion(id_estacion    BIGSERIAL PRIMARY KEY,
+                             nombre         CHARACTER VARYING,
+                             direccion      CHARACTER VARYING);
+
+/* SE CREA TABLA DE TREN */
+CREATE TABLE public.tren(id_tren    BIGSERIAL PRIMARY KEY,
+                         modelo     CHARACTER VARYING,
+                         capacidad  INTEGER);
+
+/* SE CREA TABLA DE PASAJERO */
+CREATE TABLE public.pasajero(id_pasajero BIGSERIAL PRIMARY KEY,
+                             nombre      CHARACTER VARYING,
+                             direccion   CHARACTER VARYING,
+                             fecha       DATE);
+
+
+/* SE CREA TABLA DE TRAYECTO */
+CREATE TABLE public.trayecto(id_trayecto    BIGSERIAL PRIMARY KEY,
+                             id_estacion    BIGINT,
+                             id_tren        BIGINT,
+                             nombre         CHARACTER VARYING);
+
+/* SE AGREGA LLAVE FORANEA ESTACION-TRAYECTO */
+ALTER TABLE public.trayecto
+    ADD CONSTRAINT estacion_trayecto_FK FOREIGN KEY (id_estacion) REFERENCES public.estacion(id_estacion);
+
+/* SE AGREGA LLAVE FORANEA TREN-TRAYECTO */
+ALTER TABLE public.trayecto
+    ADD CONSTRAINT tren_trayecto_FK FOREIGN KEY (id_tren)   REFERENCES public.tren(id_tren);
+
+/* SE CREA TABLA DE VIAJE */
+CREATE TABLE public.viaje(id_viaje    BIGSERIAL PRIMARY KEY,
+                          id_pasajero BIGINT,
+                          id_trayecto BIGINT,
+                          inicio      DATE,
+                          fin         DATE);
+
+/* SE AGREGA LLAVE FORANEA PASAJERO-VIAJE */
+ALTER TABLE public.viaje
+    ADD CONSTRAINT pasajero_viaje_FK FOREIGN KEY (id_pasajero) REFERENCES public.pasajero(id_pasajero);
+
+/* SE AGREGA LLAVE FORANEA TRAYECTO-VIAJE */
+ALTER TABLE public.viaje
+    ADD CONSTRAINT trayecto_viaje_FK FOREIGN KEY (id_trayecto) REFERENCES public.trayecto(id_trayecto);
